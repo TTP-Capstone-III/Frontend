@@ -1,0 +1,104 @@
+.site-navbar {
+    position: sticky;
+    z-index: 30;
+    top: 0;
+    min-height: 74px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 0 2rem;
+    background: rgba(255, 255, 255, 0.94);
+    border-bottom: 1px solid var(--navy-line);
+    backdrop-filter: blur(16px);
+}
+
+.navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    color: var(--navy);
+    font-size: 1.18rem;
+    font-weight: 850;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.navbar-brand-mark {
+    width: 34px;
+    height: 34px;
+    display: grid;
+    place-items: center;
+    color: var(--navy);
+    background: var(--amber);
+    border-radius: 10px 10px 10px 3px;
+    font-weight: 900;
+}
+
+.navbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.navbar-link {
+    padding: 0.5625rem 0.875rem;
+    color: var(--navy-muted);
+    border-radius: 9px;
+    font-size: 0.9rem;
+    font-weight: 750;
+    text-decoration: none;
+    transition:
+        color 0.16s ease,
+        background 0.16s ease;
+}
+
+.navbar-link:hover {
+    color: var(--navy);
+    background: var(--amber-soft);
+}
+
+.navbar-link[aria-current="page"] {
+    color: var(--navy);
+    background: var(--amber-soft);
+}
+
+.navbar-user {
+    margin-left: 0.25rem;
+    color: var(--navy-muted);
+    font-size: 0.88rem;
+}
+
+.navbar-button {
+    min-height: 39px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.875rem;
+    color: var(--navy);
+    background: transparent;
+    border: 1px solid var(--navy-line);
+    border-radius: 11px;
+    font: inherit;
+    font-size: 0.87rem;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.navbar-button:hover {
+    background: var(--amber-soft);
+}
+
+@media (max-width: 700px) {
+    .site-navbar {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+    }
+
+    .navbar-actions {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+}
