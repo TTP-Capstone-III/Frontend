@@ -1,0 +1,136 @@
+.listing-page {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.listing-header {
+  max-width: 620px;
+  margin: 12px auto 32px;
+  text-align: center;
+}
+
+.listing-page h1 {
+  margin: 8px 0 10px;
+  color: var(--navy);
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -1.4px;
+}
+
+.listing-searchbar {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid var(--navy-line);
+  border-radius: 16px;
+  background: var(--white);
+}
+
+.listing-searchbar > div {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.listing-searchbar span {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--navy-muted);
+}
+
+.listing-searchbar input,
+.listing-searchbar select {
+  width: 100%;
+  height: 3rem;
+  font: inherit;
+  border: 1px solid var(--navy-line);
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  background: var(--white);
+  color: var(--navy);
+  box-sizing: border-box;
+}
+
+.listing-searchbar button {
+  height: 3rem;
+  padding: 0 1.2rem;
+  border: 0;
+  border-radius: 10px;
+  background: var(--navy);
+  color: var(--white);
+  font: inherit;
+  cursor: pointer;
+  align-self: end;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.listing-grid > div {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  border: 1px solid var(--navy-line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--white);
+  box-shadow: 0 10px 28px rgba(15, 39, 66, 0.08);
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.listing-grid > div:hover {
+  border-color: rgba(15, 39, 66, 0.28);
+  transform: translateY(-2px);
+}
+
+.listing-grid img {
+  width: 100%;
+  height: 14rem;
+  object-fit: cover;
+  display: block;
+}
+
+.listing-grid > div > div {
+  padding: 1rem;
+}
+
+.listing-grid > div > div > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: start;
+}
+
+.listing-grid h2,
+.listing-grid p {
+  margin: 0 0 0.5rem;
+}
+
+.listing-grid p {
+  color: var(--navy-muted);
+}
+
+@media (min-width: 700px) {
+  .listing-searchbar {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) auto;
+    align-items: end;
+  }
+}
+
+@media (max-width: 699px) {
+  .listing-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .listing-searchbar button {
+    width: 100%;
+  }
+
+  .listing-page h1 {
+    font-size: 36px;
+  }
+}

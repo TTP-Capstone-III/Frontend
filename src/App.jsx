@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Navbar from "./components/Navbar.jsx";
 import AuthPage from "./pages/AuthPage";
+import ListingPage from "./pages/ListingPage.jsx";
 import { useAuth } from "./context/AuthContext";
 
 export default function App() {
@@ -48,6 +49,15 @@ export default function App() {
               <main>
                 <h1>Host reservations</h1>
               </main>
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/listings"
+          element={
+            <ProtectedRoute>
+              <ListingPage />
             </ProtectedRoute>
           }
         />
