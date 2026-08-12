@@ -7,10 +7,10 @@
 
     --navy: #0f2742;
     --white: #ffffff;
-    --amber: #f4b942;
+    --amber: #d6a23a;
     --navy-muted: rgba(15, 39, 66, 0.68);
     --navy-line: rgba(15, 39, 66, 0.16);
-    --amber-soft: rgba(244, 185, 66, 0.22);
+    --amber-soft: rgba(214, 162, 58, 0.22);
 }
 
 body {
