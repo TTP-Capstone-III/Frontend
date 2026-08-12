@@ -12,6 +12,9 @@ export default function Navbar() {
       </NavLink>
       {user ? (
         <div className="navbar-actions">
+          <NavLink className="navbar-link" to="/listings">
+            Listings
+          </NavLink>
           <NavLink className="navbar-link" to="/driver">
             Driver
           </NavLink>
