@@ -20,12 +20,21 @@ export async function createListing(data) {
   });
 }
 
-// PUT update a listing (owning host only)
+// PATCH update a listing (owning host only)
 export async function updateListing(id, data) {
   return apiRequest(`/api/listings/${id}`, {
-    method: "PUT",
+    method: "PATCH",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+  });
+}
+
+// PATCH toggle a listing's active status (owning host only)
+export async function updateListingStatus(id, isActive) {
+  return apiRequest(`/api/listings/${id}/status`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ isActive }),
   });
 }
 

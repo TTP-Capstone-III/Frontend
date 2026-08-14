@@ -1,7 +1,8 @@
 // src/components/HostReservations.jsx
 import { useEffect, useState } from "react";
-import { getHostReservations } from "../API/reservations";
+import { getHostReservations } from "../api/reservations";
 import ReservationCard from "./ReservationCard";
+import { formatPrice, formatDate, vehicleLabel } from "../utils/formats"
 
 function HostReservations() {
   const [reservations, setReservations] = useState([]);

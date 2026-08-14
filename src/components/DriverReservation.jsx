@@ -1,7 +1,9 @@
-// src/components/DriverReservations.jsx
+
+// src/components/DriverReservation.jsx
 import { useEffect, useState } from "react";
 import { getDriverReservations, cancelReservation } from "../api/reservations";
 import ReservationCard from "./ReservationCard";
+import "../css/DriverDashBoard.css";
 
 function DriverReservations() {
   const [reservations, setReservations] = useState([]);
@@ -40,12 +42,12 @@ function DriverReservations() {
     }
   }
 
-  if (loading) return <p>Loading your reservations...</p>;
-  if (error) return <p className="text-red-600">Error: {error}</p>;
-  if (reservations.length === 0) return <p>You have no reservations yet.</p>;
+  if (loading) return <p className="page-subtitle">Loading your reservations...</p>;
+  if (error) return <p className="form-error">Error: {error}</p>;
+  if (reservations.length === 0) return <p className="page-subtitle">You have no reservations yet.</p>;
 
   return (
-    <div className="space-y-4">
+    <div>
       {reservations.map((reservation) => (
         <ReservationCard
           key={reservation.id}
@@ -57,4 +59,4 @@ function DriverReservations() {
   );
 }
 
-export default DriverReservations;
+export default DriverReservations

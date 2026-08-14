@@ -1,5 +1,5 @@
-// App.jsx
-// src/components/VehicleSelect.jsx
+ import "../css/DriverDashboard.css"
+
 const VEHICLE_CATEGORIES = [
   { value: "COMPACT", label: "Compact" },
   { value: "SEDAN", label: "Sedan" },

@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import VehicleSelect from "./VehicleSelect";
 import { quoteReservation } from "../api/reservations";
-import { createCheckoutSession } from "../api/payments";
-import { formatPrice } from "../utils/format";
+import { createCheckoutSession } from "../api/payment";
+import { formatPrice } from "../utils/formats";
+import "../css/DriverDashBoard.css";
 
 function ReservationForm({ listing }) {
   const [startTime, setStartTime] = useState("");
@@ -68,7 +68,6 @@ function ReservationForm({ listing }) {
         fitAcknowledged,
       };
 
-      // stashed so BookingSuccess can call createReservation() after payment
       sessionStorage.setItem("pendingBooking", JSON.stringify(bookingDetails));
 
       await createCheckoutSession({
@@ -77,7 +76,6 @@ function ReservationForm({ listing }) {
         endTime: bookingDetails.endTime,
         totalPriceCents: quote.totalPriceCents,
       });
-      // browser redirects to Stripe from here — no further code runs
     } catch (err) {
       setError(err.message || "Unable to start checkout. Please try again.");
       setRedirecting(false);
@@ -85,44 +83,37 @@ function ReservationForm({ listing }) {
   }
 
   return (
-    <form onSubmit={handleGetQuote} className="space-y-4 max-w-md">
-      <div>
-        <label htmlFor="startTime" className="block text-sm font-medium text-gray-700 mb-1">
-          Arrival
-        </label>
+    <form onSubmit={handleGetQuote} className="reservation-form">
+      <div className="form-field">
+        <label htmlFor="startTime">Arrival</label>
         <input
           id="startTime"
           type="datetime-local"
           value={startTime}
           onChange={(e) => setStartTime(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 
-      <div>
-        <label htmlFor="endTime" className="block text-sm font-medium text-gray-700 mb-1">
-          Departure
-        </label>
+      <div className="form-field">
+        <label htmlFor="endTime">Departure</label>
         <input
           id="endTime"
           type="datetime-local"
           value={endTime}
           onChange={(e) => setEndTime(e.target.value)}
           required
-          className="w-full border border-gray-300 rounded-md px-3 py-2"
         />
       </div>
 
       <VehicleSelect value={driverVehicleCategory} onChange={handleVehicleChange} />
 
       {needsAcknowledgment && (
-        <label className="flex items-start gap-2 text-sm text-gray-700">
+        <label className="fit-acknowledgment">
           <input
             type="checkbox"
             checked={fitAcknowledged}
             onChange={(e) => setFitAcknowledged(e.target.checked)}
-            className="mt-1"
           />
           <span>
             {listing?.otherVehicleDescription ||
@@ -131,28 +122,25 @@ function ReservationForm({ listing }) {
         </label>
       )}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="form-error">{error}</p>}
 
-      <button
-        type="submit"
-        disabled={quoting || redirecting}
-        className="w-full bg-blue-600 text-white rounded-md py-2 font-medium hover:bg-blue-700 disabled:opacity-50"
-      >
+      <button type="submit" disabled={quoting || redirecting} className="btn-amber">
         {quoting ? "Checking..." : "Check price & availability"}
       </button>
 
       {quote && (
-        <div className="border border-gray-200 rounded-md p-4 mt-4 space-y-2">
-          <p className="text-lg font-semibold">{formatPrice(quote.totalPriceCents)}</p>
+        <div className="quote-box">
+          <p className="quote-price">{formatPrice(quote.totalPriceCents)}</p>
           {quote.billableBlocks && (
-            <p className="text-sm text-gray-600">Billed time: {quote.billableBlocks}</p>
+            <p className="quote-detail">Billed time: {quote.billableBlocks}</p>
           )}
-          <p className="text-sm text-gray-600">{quote.fitMessage}</p>
+          <p className="quote-detail">{quote.fitMessage}</p>
           <button
             type="button"
             onClick={handleConfirmAndPay}
             disabled={redirecting}
-            className="w-full bg-green-600 text-white rounded-md py-2 font-medium hover:bg-green-700 disabled:opacity-50"
+            className="btn-amber"
+            style={{ marginTop: "0.75rem" }}
           >
             {redirecting ? "Redirecting to payment..." : "Confirm & Pay"}
           </button>
