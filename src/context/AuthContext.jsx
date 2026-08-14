@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import apiRequest from "../api/client";
 
+// This context keeps one shared authentication state for the whole app.
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
@@ -66,5 +67,6 @@ export function AuthProvider({ children }) {
 }
 
 export function useAuth() {
+  // Components use this helper instead of importing AuthContext directly.
   return useContext(AuthContext);
 }

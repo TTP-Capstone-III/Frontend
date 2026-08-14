@@ -3,6 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import "../styles/pages/auth-page.css";
 
 export default function AuthPage() {
+  // One mode value lets the page reuse the same card for both auth forms.
   const [mode, setMode] = useState("login");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,6 +40,7 @@ export default function AuthPage() {
         });
       }
     } catch (error) {
+      // Display the message created by the shared API client.
       setErrorMessage(error.message);
     } finally {
       setSubmitting(false);
@@ -47,99 +49,101 @@ export default function AuthPage() {
 
   return (
     <main className="auth-page">
-      <section className="auth-art">
-        <div className="auth-art-content">
-          <span>P</span>
-          <p>
-            One account.
-            <br />
-            Two ways to park smarter.
-          </p>
-        </div>
-      </section>
-
-      <section className="auth-form-wrap">
-        <div className="auth-card">
-          <div className="auth-heading">
-            <p className="auth-kicker">
-              {isSignup ? "Join ParkNGo" : "Welcome back"}
-            </p>
-            <h1>
-              {isSignup ? "Create your account" : "Log in to continue"}
-            </h1>
-            <p className="auth-description">
-              Use the same account to find parking and host your own space.
+      <div className="auth-layout">
+        <section className="auth-art">
+          <div className="auth-art-content">
+            <span>P</span>
+            <p>
+              One account.
+              <br />
+              Two ways to park smarter.
             </p>
           </div>
+        </section>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
-            {isSignup && (
+        <section className="auth-form-wrap">
+          <div className="auth-card">
+            <div className="auth-heading">
+              <p className="auth-kicker">
+                {isSignup ? "Join ParkNGo" : "Welcome back"}
+              </p>
+              <h1>
+                {isSignup ? "Create your account" : "Log in to continue"}
+              </h1>
+              <p className="auth-description">
+                Use the same account to find parking and host your own space.
+              </p>
+            </div>
+
+            <form className="auth-form" onSubmit={handleSubmit}>
+              {isSignup && (
+                <label className="auth-field">
+                  Full name
+                  <input
+                    className="auth-input"
+                    type="text"
+                    value={name}
+                    onChange={(event) => setName(event.target.value)}
+                    required
+                  />
+                </label>
+              )}
               <label className="auth-field">
-                Full name
+                Email
                 <input
                   className="auth-input"
-                  type="text"
-                  value={name}
-                  onChange={(event) => setName(event.target.value)}
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
                   required
                 />
               </label>
-            )}
-            <label className="auth-field">
-              Email
-              <input
-                className="auth-input"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </label>
 
-            <label className="auth-field">
-              Password
-              <input
-                className="auth-input"
-                type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
-                required
-              />
-              <small>At least 8 characters</small>
-            </label>
+              <label className="auth-field">
+                Password
+                <input
+                  className="auth-input"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  required
+                />
+                <small>At least 8 characters</small>
+              </label>
 
-            {errorMessage && (
-              <p className="auth-error" role="alert">
-                {errorMessage}
-              </p>
-            )}
+              {errorMessage && (
+                <p className="auth-error app-alert" role="alert">
+                  {errorMessage}
+                </p>
+              )}
+
+              <button
+                className="auth-primary-button"
+                type="submit"
+                disabled={submitting}
+              >
+                {submitting
+                  ? "Please wait…"
+                  : isSignup
+                    ? "Create account"
+                    : "Log in"}
+              </button>
+            </form>
 
             <button
-              className="auth-primary-button"
-              type="submit"
+              className="auth-toggle-button"
+              type="button"
+              onClick={toggleMode}
               disabled={submitting}
             >
-              {submitting
-                ? "Please wait…"
-                : isSignup
-                  ? "Create account"
-                  : "Log in"}
+              <span>
+                {isSignup ? "Already have an account?" : "New to ParkNGo?"}
+              </span>
+              <strong>{isSignup ? "Log in" : "Sign up"}</strong>
             </button>
-          </form>
-
-          <button
-            className="auth-toggle-button"
-            type="button"
-            onClick={toggleMode}
-            disabled={submitting}
-          >
-            <span>
-              {isSignup ? "Already have an account?" : "New to ParkNGo?"}
-            </span>
-            <strong>{isSignup ? "Log in" : "Sign up"}</strong>
-          </button>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
     </main>
   );
 }

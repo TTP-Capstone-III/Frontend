@@ -48,6 +48,7 @@
 }
 
 .navbar-account {
+    position: relative;
     justify-self: end;
 }
 
@@ -96,8 +97,22 @@
     cursor: pointer;
 }
 
-.navbar-button:hover {
+.navbar-button:hover:not(:disabled) {
     background: var(--amber-soft);
+}
+
+.navbar-button:disabled {
+    opacity: 0.65;
+    cursor: wait;
+}
+
+.navbar-logout-error {
+    position: absolute;
+    top: calc(100% + 0.75rem);
+    right: 0;
+    width: max-content;
+    max-width: min(20rem, 80vw);
+    margin: 0;
 }
 
 @media (max-width: 700px) {

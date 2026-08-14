@@ -14,5 +14,6 @@ export default function ProtectedRoute({ children }) {
     return <Navigate to="/auth" replace />;
   }
 
+  // A confirmed session is allowed to render the protected page.
   return children;
 }
