@@ -1,59 +1,66 @@
 .auth-page {
-    min-height: calc(100vh - 75px);
     max-width: none;
     display: grid;
-    grid-template-columns: 0.78fr 1.22fr;
+    place-items: center;
     margin: 0;
-    padding: 0;
-    background: var(--white);
+    padding: 2.5rem 1.5rem;
+    background: rgba(15, 39, 66, 0.05);
     box-sizing: border-box;
 }
 
+.auth-layout {
+    width: min(100%, 68rem);
+    min-height: 32rem;
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr;
+    overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--navy-line);
+    border-radius: 24px;
+    box-shadow: 0 24px 60px rgba(15, 39, 66, 0.14);
+}
+
 .auth-art {
-    min-height: calc(100vh - 75px);
     display: grid;
     place-items: center;
-    padding: 3rem;
+    padding: 3.5rem;
     color: var(--white);
     background: var(--navy);
     box-sizing: border-box;
 }
 
 .auth-art-content span {
-    width: 90px;
-    height: 90px;
+    width: 74px;
+    height: 74px;
     display: grid;
     place-items: center;
     margin-bottom: 1.75rem;
     color: var(--navy);
     background: var(--amber);
-    border-radius: 28px 28px 28px 7px;
-    font-size: 3rem;
+    border-radius: 23px 23px 23px 6px;
+    font-size: 2.4rem;
     font-weight: 900;
 }
 
 .auth-art-content p {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.65rem;
     font-weight: 800;
     line-height: 1.25;
 }
 
 .auth-form-wrap {
+    min-height: 40rem;
     display: grid;
     place-items: center;
-    padding: 3.75rem 1.5rem;
-    background: rgba(15, 39, 66, 0.05);
+    padding: 3rem 2.5rem;
+    background: var(--white);
     box-sizing: border-box;
 }
 
 .auth-card {
     width: min(100%, 28rem);
-    padding: 2.5rem;
-    background: var(--white);
-    border: 1px solid var(--navy-line);
-    border-radius: 18px;
-    box-shadow: 0 18px 50px rgba(15, 39, 66, 0.12);
+    padding: 0;
     box-sizing: border-box;
 }
 
@@ -182,12 +189,13 @@
 }
 
 @media (max-width: 800px) {
-    .auth-page {
+    .auth-layout {
         grid-template-columns: 1fr;
+        min-height: 0;
+        border-radius: 18px;
     }
 
     .auth-art {
-        min-height: auto;
         place-items: start;
         padding: 1.5rem;
     }
@@ -212,10 +220,20 @@
     }
 
     .auth-form-wrap {
-        padding: 2rem 1rem;
+        padding: 2rem 1.5rem;
     }
 
     .auth-card {
-        padding: 1.5rem;
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .auth-page {
+        padding: 1rem;
+    }
+
+    .auth-form-wrap {
+        padding: 1.5rem 1rem;
     }
 }

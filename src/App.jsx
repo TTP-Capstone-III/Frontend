@@ -2,8 +2,9 @@ import { Navigate, Route, Routes, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
 import AuthPage from "./pages/AuthPage";
-import ListingPage from "./pages/ListingPage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 import { useAuth } from "./context/AuthContext";
 import BookingSuccess from "./pages/BookingSuccess.jsx";
 import HostReservations from "./components/HostReservations.jsx";
@@ -170,6 +171,7 @@ export default function App() {
       <Navbar />
 
       <Routes>
+        {/* Keep authenticated users out of the login and signup page. */}
         <Route
           path="/auth"
           element={user ? <Navigate to="/driver" replace /> : <AuthPage />}
@@ -198,23 +200,16 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/listings"
-          element={
-            <ProtectedRoute>
-              <ListingPage />
-            </ProtectedRoute>
-          }
-        />
+        {/* Preserve the old listings URL by sending it to the homepage. */}
+        <Route path="/listings" element={<Navigate to="/" replace />} />
 
-        <Route
-          path="/"
-          element={<Navigate to={user ? "/driver" : "/auth"} replace />}
-        />
+        <Route path="/" element={<HomePage />} />
 
-        {/* Send unknown URLs through the same login-based root redirect. */}
+        {/* Send unknown URLs back to the public homepage. */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      <Footer />
     </div>
   );
 }

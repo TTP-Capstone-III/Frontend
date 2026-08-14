@@ -13,12 +13,55 @@
     --amber-soft: rgba(214, 162, 58, 0.22);
 }
 
+/* Keep centered layouts from shifting when a page gains or loses a scrollbar. */
+html {
+    scrollbar-gutter: stable;
+}
+
 body {
     margin: 0;
 }
 
+.app-shell {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
 main {
+    flex: 1;
     max-width: 48rem;
     margin: 0 auto;
     padding: 4rem 1.5rem;
+}
+
+/* Give validation and request errors one clear warning appearance. */
+.app-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    color: var(--navy);
+    background: var(--amber-soft);
+    border: 1px solid rgba(214, 162, 58, 0.42);
+    border-left: 4px solid var(--amber);
+    border-radius: 0.5rem;
+    box-sizing: border-box;
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-align: left;
+}
+
+.app-alert::before {
+    content: "!";
+    width: 1.2rem;
+    height: 1.2rem;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    color: var(--white);
+    background: var(--amber);
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 900;
 }
