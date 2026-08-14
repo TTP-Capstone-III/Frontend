@@ -25,6 +25,7 @@ export default function App() {
       <Navbar />
 
       <Routes>
+        {/* Keep authenticated users out of the login and signup page. */}
         <Route
           path="/auth"
           element={user ? <Navigate to="/driver" replace /> : <AuthPage />}
@@ -54,6 +55,7 @@ export default function App() {
           }
         />
 
+        {/* Preserve the old listings URL by sending it to the homepage. */}
         <Route path="/listings" element={<Navigate to="/" replace />} />
 
         <Route path="/" element={<HomePage />} />

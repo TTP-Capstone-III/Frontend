@@ -1,58 +1,39 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import apiRequest from "../api/client";
+import LocationSearchInput from "../components/LocationSearchInput";
 import "../styles/pages/home-page.css";
 
-const LOCATIONS = {
-  "New York City": {
-    destinationLat: 40.7128,
-    destinationLng: -74.006,
-    west: -74.26,
-    south: 40.49,
-    east: -73.7,
-    north: 40.93,
-  },
-  Manhattan: {
-    destinationLat: 40.758,
-    destinationLng: -73.9855,
-    west: -74.03,
-    south: 40.69,
-    east: -73.9,
-    north: 40.88,
-  },
-  Brooklyn: {
-    destinationLat: 40.6782,
-    destinationLng: -73.9442,
-    west: -74.05,
-    south: 40.56,
-    east: -73.83,
-    north: 40.74,
-  },
-  Queens: {
-    destinationLat: 40.7282,
-    destinationLng: -73.7949,
-    west: -73.97,
-    south: 40.54,
-    east: -73.7,
-    north: 40.81,
-  },
-  Bronx: {
-    destinationLat: 40.8448,
-    destinationLng: -73.8648,
-    west: -73.94,
-    south: 40.78,
-    east: -73.75,
-    north: 40.92,
-  },
-  "Staten Island": {
-    destinationLat: 40.5795,
-    destinationLng: -74.1502,
-    west: -74.26,
-    south: 40.49,
-    east: -74.05,
-    north: 40.66,
-  },
+// Broad boundaries allow the default homepage to choose from seeded listings.
+const HOMEPAGE_DISCOVERY_AREA = {
+  destinationLat: 39.8283,
+  destinationLng: -98.5795,
+  west: -180,
+  south: 18,
+  east: -66,
+  north: 72,
 };
+
+const HOMEPAGE_RADIUS_MILES = 5;
+const MILES_PER_LATITUDE_DEGREE = 69;
+
+function createNearbyBounds(latitude, longitude) {
+  // Convert the five-mile radius into map boundaries for the backend search.
+  const latitudeDifference = HOMEPAGE_RADIUS_MILES / MILES_PER_LATITUDE_DEGREE;
+
+  const latitudeInRadians = (latitude * Math.PI) / 180;
+
+  const longitudeDifference =
+    HOMEPAGE_RADIUS_MILES /
+    (MILES_PER_LATITUDE_DEGREE * Math.cos(latitudeInRadians));
+
+  return {
+    west: longitude - longitudeDifference,
+    south: latitude - latitudeDifference,
+    east: longitude + longitudeDifference,
+    north: latitude + latitudeDifference,
+  };
+}
 
 const VEHICLE_OPTIONS = [
   { value: "COMPACT", label: "Small / compact car" },
@@ -72,6 +53,7 @@ function getVehicleLabel(vehicleCategory) {
 }
 
 function formatDateTimeInput(date) {
+  // datetime-local inputs require YYYY-MM-DDTHH:mm without a timezone suffix.
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
@@ -82,6 +64,7 @@ function formatDateTimeInput(date) {
 }
 
 function createDefaultTimes() {
+  // Start homepage discovery one week ahead with a two-hour parking window.
   const startTime = new Date();
   startTime.setDate(startTime.getDate() + 7);
   startTime.setHours(12, 0, 0, 0);
@@ -98,46 +81,79 @@ function createDefaultTimes() {
 const DEFAULT_TIMES = createDefaultTimes();
 
 const DEFAULT_FORM = {
-  location: "New York City",
+  location: "",
+  destinationLat: "",
+  destinationLng: "",
   startTime: DEFAULT_TIMES.startTime,
   endTime: DEFAULT_TIMES.endTime,
   driverVehicleCategory: "COMPACT",
 };
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
   const [form, setForm] = useState(DEFAULT_FORM);
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [findingLocation, setFindingLocation] = useState(false);
+
+  // This switches the card heading after geolocation loads nearby results.
+  const [showingNearbyListings, setShowingNearbyListings] = useState(false);
 
   function updateForm(field, value) {
+    // Computed property syntax updates whichever form field called this helper.
     setForm((currentForm) => ({
       ...currentForm,
       [field]: value,
     }));
   }
 
-  async function loadHomepageListings() {
+  //runs while the user types.
+  // saves the text but clears coordinates because typed text is not yet a confirmed Mapbox location.
+  function handleLocationChange(locationText) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      location: locationText,
+      destinationLat: "",
+      destinationLng: "",
+    }));
+  }
+
+  // runs after the user selects a suggestion.
+  // It saves: - The readable address, Latitude, Longitude
+  function handleLocationSelect(selectedLocation) {
+    setForm((currentForm) => ({
+      ...currentForm,
+      location: selectedLocation.label,
+      destinationLat: selectedLocation.latitude,
+      destinationLng: selectedLocation.longitude,
+    }));
+  }
+
+  async function loadRandomHomepageListings() {
     setLoading(true);
     setError("");
+    setShowingNearbyListings(false);
 
     try {
-      const location = LOCATIONS[DEFAULT_FORM.location];
+      // The backend expects dates, vehicle size, location, and visible boundaries.
       const query = new URLSearchParams({
-        location: DEFAULT_FORM.location,
         startTime: new Date(DEFAULT_FORM.startTime).toISOString(),
         endTime: new Date(DEFAULT_FORM.endTime).toISOString(),
         driverVehicleCategory: DEFAULT_FORM.driverVehicleCategory,
-        destinationLat: location.destinationLat,
-        destinationLng: location.destinationLng,
-        west: location.west,
-        south: location.south,
-        east: location.east,
-        north: location.north,
+        destinationLat: HOMEPAGE_DISCOVERY_AREA.destinationLat,
+        destinationLng: HOMEPAGE_DISCOVERY_AREA.destinationLng,
+        west: HOMEPAGE_DISCOVERY_AREA.west,
+        south: HOMEPAGE_DISCOVERY_AREA.south,
+        east: HOMEPAGE_DISCOVERY_AREA.east,
+        north: HOMEPAGE_DISCOVERY_AREA.north,
         sort: "distance",
       });
 
       const response = await apiRequest(`/api/listings?${query}`);
+
+      // Shuffle a copied array so the homepage can show a different set of ten.
       const randomListings = [...response.items]
         .sort(() => Math.random() - 0.5)
         .slice(0, 10);
@@ -149,6 +165,80 @@ export default function HomePage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function loadNearbyHomepageListings(latitude, longitude) {
+    setLoading(true);
+    setError("");
+
+    try {
+      // Build a smaller search area around the device coordinates.
+      const bounds = createNearbyBounds(latitude, longitude);
+
+      const query = new URLSearchParams({
+        startTime: new Date(DEFAULT_FORM.startTime).toISOString(),
+        endTime: new Date(DEFAULT_FORM.endTime).toISOString(),
+        driverVehicleCategory: DEFAULT_FORM.driverVehicleCategory,
+        destinationLat: latitude,
+        destinationLng: longitude,
+        west: bounds.west,
+        south: bounds.south,
+        east: bounds.east,
+        north: bounds.north,
+        sort: "distance",
+      });
+
+      const response = await apiRequest(`/api/listings?${query}`);
+
+      // Keep only true five-mile matches, randomize them, and show at most ten.
+      const nearbyListings = response.items
+        .filter((listing) => listing.distanceMiles <= HOMEPAGE_RADIUS_MILES)
+        .sort(() => Math.random() - 0.5)
+        .slice(0, 10);
+
+      setListings(nearbyListings);
+      setShowingNearbyListings(true);
+    } catch (requestError) {
+      setListings([]);
+      setShowingNearbyListings(false);
+      setError(requestError.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleUseCurrentLocation() {
+    if (!navigator.geolocation) {
+      loadRandomHomepageListings();
+      return;
+    }
+
+    setFindingLocation(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        // Use the device location only to personalize the homepage cards.
+        await loadNearbyHomepageListings(latitude, longitude);
+
+        setFindingLocation(false);
+      },
+      async () => {
+        // Permission failed, so display a new random selection instead.
+        await loadRandomHomepageListings();
+
+        setFindingLocation(false);
+      },
+
+      {
+        // A recent approximate location is accurate enough for homepage cards.
+        enableHighAccuracy: false,
+        timeout: 10000,
+        maximumAge: 300000,
+      },
+    );
   }
 
   function handleSubmit(event) {
@@ -164,7 +254,8 @@ export default function HomePage() {
   }
 
   useEffect(() => {
-    loadHomepageListings();
+    // Load a random discovery set once when the homepage first mounts.
+    loadRandomHomepageListings();
   }, []);
 
   return (
@@ -176,19 +267,19 @@ export default function HomePage() {
         </h1>
 
         <form className="listing-searchbar" onSubmit={handleSubmit}>
-          <label className="listing-search-field listing-location-field">
+          {/* not<lable></lable> */}
+          <div className="listing-search-field listing-location-field">
             <span>Where</span>
-            <select
+
+            <LocationSearchInput
               value={form.location}
-              onChange={(event) => updateForm("location", event.target.value)}
-            >
-              {Object.keys(LOCATIONS).map((location) => (
-                <option key={location} value={location}>
-                  {location}
-                </option>
-              ))}
-            </select>
-          </label>
+              onChange={handleLocationChange}
+              onSelect={handleLocationSelect}
+              onUseCurrentLocation={handleUseCurrentLocation}
+              findingLocation={findingLocation}
+              placeholder="Address, landmark, or neighborhood"
+            />
+          </div>
 
           <div className="listing-search-field listing-time-field">
             <div className="listing-date-inputs">
@@ -244,14 +335,18 @@ export default function HomePage() {
         </p>
 
         {error ? (
-          <p className="listing-message listing-error">{error}</p>
+          <p className="listing-message listing-error app-alert" role="alert">
+            {error}
+          </p>
         ) : null}
       </section>
 
       <section className="listing-results">
         <div className="listing-results-heading">
           <div>
-            <p>Available now</p>
+            <p>
+              {showingNearbyListings ? "Available nearby" : "Available spots"}
+            </p>
             <h2>Explore parking spots</h2>
           </div>
         </div>

@@ -23,6 +23,7 @@ export default function Footer() {
           <Link to="/host">List your spot</Link>
         </div>
 
+        {/* These labels can become links when the support pages are added. */}
         <div className="footer-column footer-future-links">
           <h2>Support</h2>
           <span>Help center</span>
