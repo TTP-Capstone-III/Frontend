@@ -1,8 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
 import AuthPage from "./pages/AuthPage";
-import ListingPage from "./pages/ListingPage.jsx";
+import HomePage from "./pages/HomePage.jsx";
 import { useAuth } from "./context/AuthContext";
 
 export default function App() {
@@ -53,23 +54,15 @@ export default function App() {
           }
         />
 
-        <Route
-          path="/listings"
-          element={
-            <ProtectedRoute>
-              <ListingPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/listings" element={<Navigate to="/" replace />} />
 
-        <Route
-          path="/"
-          element={<Navigate to={user ? "/driver" : "/auth"} replace />}
-        />
+        <Route path="/" element={<HomePage />} />
 
-        {/* Send unknown URLs through the same login-based root redirect. */}
+        {/* Send unknown URLs back to the public homepage. */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+
+      <Footer />
     </div>
   );
 }

@@ -10,29 +10,38 @@ export default function Navbar() {
         <span className="navbar-brand-mark">P</span>
         <span>ParkNGo</span>
       </NavLink>
-      {user ? (
-        <div className="navbar-actions">
-          <NavLink className="navbar-link" to="/listings">
-            Listings
-          </NavLink>
-          <NavLink className="navbar-link" to="/driver">
-            Driver
-          </NavLink>
-          <NavLink className="navbar-link" to="/host">
-            Host
-          </NavLink>
 
-          <span className="navbar-user">Hi, {user.name}</span>
-
-          <button type="button" onClick={logout} className="navbar-button">
-            Log out
-          </button>
-        </div>
-      ) : (
-        <NavLink className="navbar-button" to="/auth">
-          Log in / Sign up
+      <div className="navbar-links">
+        <NavLink className="navbar-link" to="/" end>
+          Find parking
         </NavLink>
-      )}
+        {user ? (
+          <>
+            <NavLink className="navbar-link" to="/driver">
+              Driver dashboard
+            </NavLink>
+            <NavLink className="navbar-link" to="/host">
+              Host dashboard
+            </NavLink>
+          </>
+        ) : null}
+      </div>
+
+      <div className="navbar-account">
+        {user ? (
+          <>
+            <span className="navbar-user">Hi, {user.name}</span>
+
+            <button type="button" onClick={logout} className="navbar-button">
+              Log out
+            </button>
+          </>
+        ) : (
+          <NavLink className="navbar-button" to="/auth">
+            Log in / Sign up
+          </NavLink>
+        )}
+      </div>
     </nav>
   );
 }
