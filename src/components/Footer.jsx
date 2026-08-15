@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import "../styles/components/footer.css";
 
@@ -34,3 +35,4 @@ export default function Footer() {
     </footer>
   );
 }
+
