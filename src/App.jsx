@@ -10,7 +10,6 @@ import DriverDashBoard from "./pages/DriverDashBoard.jsx";
 import HostDashboard from "./pages/HostDashboard.jsx";
 import ListParkingSpot from "./pages/ListParkingSpot.jsx";
 import BookingSuccess from "./pages/BookingSuccess.jsx";
-import { useAuth } from "./context/AuthContext.jsx";
 
 export default function App() {
   const { user, loading } = useAuth();

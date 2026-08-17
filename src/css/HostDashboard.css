@@ -15,9 +15,10 @@
 }
 
 .page-content {
-  max-width: 1152px;
+  width: min(calc(100% - 3rem), 84rem);
+  max-width: none;
   margin: 0 auto;
-  padding: 2.5rem 1rem;
+  padding: 2.5rem 0;
 }
 
 .btn-amber {
@@ -134,8 +135,18 @@
 
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem 1rem;
+}
+
+.host-listing-card {
+  max-width: 21rem;
+}
+
+.host-listing-card .search-listing-image {
+  height: 14rem;
+  flex: 0 0 14rem;
+  aspect-ratio: auto;
 }
 
 @media (max-width: 900px) {
@@ -150,32 +161,43 @@
   }
 }
 
-.listing-card {
-  border: 1px solid var(--border-light);
-  border-radius: 0.5rem;
-  overflow: hidden;
+.host-listing-status-inactive {
+  padding: 0.2rem 0.34rem;
+  color: #9f2f2f;
+  background: #fde8e8;
+  border-color: #eeb6b6;
+  font-size: 0.58rem;
+  letter-spacing: 0.025em;
 }
 
-.listing-card img {
+.host-listing-card-actions {
   width: 100%;
-  height: 8rem;
-  object-fit: cover;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-top: 0.4rem;
 }
 
-.listing-card-body {
-  padding: 0.75rem;
+.host-listing-card-actions button {
+  width: 100%;
+  min-height: 2.1rem;
+  padding: 0.4rem 0.55rem;
+  border-radius: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 750;
+  line-height: 1;
 }
 
-.listing-card-title {
-  font-weight: 600;
+.host-listing-card-actions .btn-secondary {
   color: var(--navy);
-  margin: 0;
+  background: var(--cream-alt);
+  border: 1px solid #d9cfbf;
 }
 
-.listing-card-sub {
-  font-size: 0.875rem;
-  color: var(--text-muted);
-  margin: 0.125rem 0 0 0;
+.host-listing-card-actions .btn-secondary:hover {
+  color: var(--navy);
+  background: var(--amber);
+  border-color: var(--amber);
 }
 
 .reservation-row {
@@ -215,10 +237,14 @@
   color: #475569;
 }
 
-.listing-card-actions {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
+.reservation-status-confirmed {
+  color: #176b4d;
+  background: #dff4e8;
+}
+
+.reservation-status-cancelled {
+  color: #9f2f2f;
+  background: #fde8e8;
 }
 
 .btn-small {
@@ -227,19 +253,18 @@
 }
 
 .btn-delete {
-  background: transparent;
-  border: 1px solid #dc2626;
-  color: #dc2626;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.375rem;
+  color: #9f2f2f;
+  background: #fff7f7;
+  border: 1px solid #eeb6b6;
   cursor: pointer;
-  transition: background-color 0.15s ease;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease;
 }
 
 .btn-delete:hover {
-  background-color: #fef2f2;
+  background-color: #fde8e8;
+  border-color: #dc8f8f;
 }
 
 .btn-delete:disabled {

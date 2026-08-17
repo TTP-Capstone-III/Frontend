@@ -12,9 +12,10 @@
 }
 
 .page-content-narrow {
-  max-width: 672px;
+  width: min(calc(100% - 2rem), 60rem);
+  max-width: none;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem 0;
 }
 
 .back-link {
