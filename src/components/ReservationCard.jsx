@@ -11,6 +11,19 @@ function ReservationCard({ reservation, onCancel, cancelling = false }) {
   } = reservation;
 
   const isConfirmed = status === "CONFIRMED";
+  const now = new Date();
+  const startsAt = new Date(startTime);
+  const endsAt = new Date(endTime);
+
+  let displayStatus = "✓ CONFIRMED";
+
+  if (!isConfirmed) {
+    displayStatus = "! CANCELLED";
+  } else if (endsAt <= now) {
+    displayStatus = "✓ COMPLETED";
+  } else if (startsAt <= now) {
+    displayStatus = "✓ ACTIVE";
+  }
 
   return (
     <article className="search-listing-card driver-reservation-card">
@@ -28,7 +41,7 @@ function ReservationCard({ reservation, onCancel, cancelling = false }) {
               : "search-listing-fit-warning"
           }`}
         >
-          {isConfirmed ? "✓ CONFIRMED" : "! CANCELLED"}
+          {displayStatus}
         </strong>
       </div>
 
