@@ -6,14 +6,16 @@ import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage.jsx";
 import SearchResultsPage from "./pages/SearchResultsPage.jsx";
 import { useAuth } from "./context/AuthContext";
+import DriverDashBoard from "./pages/DriverDashBoard.jsx";
+import HostDashboard from "./pages/HostDashboard.jsx";
+import ListParkingSpot from "./pages/ListParkingSpot.jsx";
+import BookingSuccess from "./pages/BookingSuccess.jsx";
+import { useAuth } from "./context/AuthContext.jsx";
 
 export default function App() {
-  // Read the authentication state supplied by AuthProvider.
-  // reads the values supplied by:  <AuthContext.Provider value={{ user, loading, login, signup, logout }}></AuthContext.Provider>
   const { user, loading } = useAuth();
 
   if (loading) {
-    // Avoid redirecting before the initial session check finishes.
     return (
       <main>
         <p>Checking session...</p>
@@ -32,15 +34,13 @@ export default function App() {
           element={user ? <Navigate to="/driver" replace /> : <AuthPage />}
         />
 
+        <Route path="/booking-success" element={<BookingSuccess />} />
+
         <Route
           path="/driver"
           element={
             <ProtectedRoute>
-              <main>
-                {/* ?. avoids a crash if user is null before the redirect. */}
-                <h1>Welcome, {user?.name}</h1>
-                <p>{user?.email}</p>
-              </main>
+              <DriverDashBoard />
             </ProtectedRoute>
           }
         />
@@ -49,9 +49,16 @@ export default function App() {
           path="/host"
           element={
             <ProtectedRoute>
-              <main>
-                <h1>Host reservations</h1>
-              </main>
+              <HostDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/host/listings/new"
+          element={
+            <ProtectedRoute>
+              <ListParkingSpot />
             </ProtectedRoute>
           }
         />
