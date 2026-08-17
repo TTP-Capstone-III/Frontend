@@ -2,7 +2,9 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getHostListings, getHostReservations } from "../api/reservations";
 import { updateListingStatus, deleteListing } from "../api/listings";
+import { getVehicleLabel } from "../components/ParkingSearchForm";
 import "../css/HostDashboard.css";
+import "../styles/pages/search-results-page.css";
 
 function HostDashboard() {
   const [listings, setListings] = useState([]);
@@ -48,7 +50,7 @@ function HostDashboard() {
     setActionError(null);
 
     const confirmed = window.confirm(
-      `Delete "${listing.title}"? This cannot be undone.`
+      `Delete "${listing.title}"? This cannot be undone.`,
     );
     if (!confirmed) return;
 
@@ -64,7 +66,9 @@ function HostDashboard() {
   }
 
   const activeCount = listings.filter((l) => l.isActive).length;
-  const confirmedCount = reservations.filter((r) => r.status === "CONFIRMED").length;
+  const confirmedCount = reservations.filter(
+    (r) => r.status === "CONFIRMED",
+  ).length;
 
   return (
     <div className="page">
@@ -73,11 +77,13 @@ function HostDashboard() {
           <div>
             <p className="eyebrow">Host workspace</p>
             <h1 className="page-title">Your parking business</h1>
-            <p className="page-subtitle">Manage spaces and see who's arriving next.</p>
+            <p className="page-subtitle">
+              Manage spaces and see who's arriving next.
+            </p>
           </div>
 
           <Link to="/host/listings/new" className="btn-amber">
-            + Add a parking spot
+            + Host your spot
           </Link>
         </div>
 
@@ -108,17 +114,63 @@ function HostDashboard() {
           ) : (
             <div className="listings-grid">
               {listings.map((listing) => (
-                <div key={listing.id} className="listing-card">
-                  <img src={listing.imageUrl} alt={listing.title} />
-                  <div className="listing-card-body">
-                    <p className="listing-card-title">{listing.title}</p>
-                    <p className="listing-card-sub">{listing.neighborhood}</p>
-                    <span className={`status-badge ${listing.isActive ? "" : "inactive"}`}>
-                      {listing.isActive ? "Active" : "Inactive"}
-                    </span>
+                <article
+                  key={listing.id}
+                  className="search-listing-card host-listing-card"
+                >
+                  <div className="search-listing-image">
+                    {listing.imageUrl ? (
+                      <img src={listing.imageUrl} alt={listing.title} />
+                    ) : (
+                      <span className="search-listing-image-empty">
+                        Image unavailable
+                      </span>
+                    )}
 
-                    <div className="listing-card-actions">
+                    <span
+                      className={`search-listing-fit ${
+                        listing.isActive
+                          ? "search-listing-fit-confirmed"
+                          : "host-listing-status-inactive"
+                      }`}
+                    >
+                      {listing.isActive ? "✓ ACTIVE" : "! INACTIVE"}
+                    </span>
+                  </div>
+
+                  <div className="search-listing-content">
+                    <p className="search-listing-location">
+                      <svg
+                        className="search-listing-location-icon"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
+                      </svg>
+                      <span>
+                        {listing.neighborhood} · {listing.zipCode}
+                      </span>
+                    </p>
+
+                    <h2>{listing.title}</h2>
+
+                    <p className="search-listing-fit-summary">
+                      Up to{" "}
+                      {getVehicleLabel(
+                        listing.maxVehicleCategory,
+                      ).toLowerCase()}
+                    </p>
+
+                    <p className="search-listing-price">
+                      <strong>
+                        ${(listing.hourlyPriceCents / 100).toFixed(2)}
+                      </strong>
+                      <span> / hour</span>
+                    </p>
+
+                    <div className="host-listing-card-actions">
                       <button
+                        type="button"
                         onClick={() => handleToggleStatus(listing)}
                         disabled={busyId === listing.id}
                         className="btn-secondary btn-small"
@@ -126,6 +178,7 @@ function HostDashboard() {
                         {listing.isActive ? "Deactivate" : "Reactivate"}
                       </button>
                       <button
+                        type="button"
                         onClick={() => handleDelete(listing)}
                         disabled={busyId === listing.id}
                         className="btn-delete"
@@ -134,7 +187,7 @@ function HostDashboard() {
                       </button>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           )}
@@ -143,15 +196,29 @@ function HostDashboard() {
         <div className="section">
           <h2 className="section-title">Received reservations</h2>
           {reservations.length === 0 ? (
-            <p className="page-subtitle">Reservations will appear here when drivers book.</p>
+            <p className="page-subtitle">
+              Reservations will appear here when drivers book.
+            </p>
           ) : (
             reservations.map((r) => (
               <div key={r.id} className="reservation-row">
                 <div>
                   <p className="reservation-row-title">{r.listing?.title}</p>
-                  <p className="reservation-row-sub">Driver: {r.driver?.name}</p>
+                  <p className="reservation-row-sub">
+                    Driver: {r.driver?.name}
+                  </p>
                 </div>
-                <span className="status-badge">{r.status}</span>
+                <span
+                  className={`status-badge ${
+                    r.status === "CONFIRMED"
+                      ? "reservation-status-confirmed"
+                      : r.status === "CANCELLED"
+                        ? "reservation-status-cancelled"
+                        : ""
+                  }`}
+                >
+                  {r.status}
+                </span>
               </div>
             ))
           )}
