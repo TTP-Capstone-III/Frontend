@@ -53,7 +53,7 @@ export default function Navbar() {
         {/* Show account actions for a user or the auth link for a guest. */}
         {user ? (
           <>
-            <span className="navbar-user">Hi, {user.name}</span>
+            <span className="navbar-user">{user.name}</span>
 
             <button
               type="button"

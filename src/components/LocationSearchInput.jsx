@@ -156,6 +156,10 @@ export default function LocationSearchInput({
   }
 
   function handleCurrentLocation() {
+    if (!onUseCurrentLocation) {
+      return;
+    }
+
     setIsOpen(false);
     onUseCurrentLocation();
   }
@@ -186,27 +190,29 @@ export default function LocationSearchInput({
       {isOpen && (
         // Current location and Mapbox results share one custom dropdown.
         <div className="location-search-dropdown">
-          <button
-            className="location-search-option current-location-option"
-            type="button"
-            onClick={handleCurrentLocation}
-            disabled={findingLocation}
-          >
-            <svg
-              className="current-location-icon"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          {onUseCurrentLocation ? (
+            <button
+              className="location-search-option current-location-option"
+              type="button"
+              onClick={handleCurrentLocation}
+              disabled={findingLocation}
             >
-              <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
-              <circle cx="12" cy="9" r="2.5" />
-            </svg>
+              <svg
+                className="current-location-icon"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" />
+                <circle cx="12" cy="9" r="2.5" />
+              </svg>
 
-            <span>
-              {findingLocation
-                ? "Finding your location..."
-                : "Use my current location"}
-            </span>
-          </button>
+              <span>
+                {findingLocation
+                  ? "Finding your location..."
+                  : "Use my current location"}
+              </span>
+            </button>
+          ) : null}
 
           {suggestions.map((suggestion) => (
             <button

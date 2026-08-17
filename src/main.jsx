@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import App from "./App.jsx";
 import "./styles/global.css";
+import "mapbox-gl/dist/mapbox-gl.css";
 
 // BrowserRouter enables routes; AuthProvider supplies shared session state.
 // StrictMode helps reveal unsafe React behavior during development.

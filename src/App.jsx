@@ -4,9 +4,10 @@ import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
 import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage.jsx";
+import SearchResultsPage from "./pages/SearchResultsPage.jsx";
+import { useAuth } from "./context/AuthContext";
 import DriverDashBoard from "./pages/DriverDashBoard.jsx";
 import HostDashboard from "./pages/HostDashboard.jsx";
-// import ListingPage from "./pages/ListingPage.jsx";
 import ListParkingSpot from "./pages/ListParkingSpot.jsx";
 import BookingSuccess from "./pages/BookingSuccess.jsx";
 import { useAuth } from "./context/AuthContext.jsx";
@@ -64,6 +65,8 @@ export default function App() {
 
         {/* Preserve the old listings URL by sending it to the homepage. */}
         <Route path="/listings" element={<Navigate to="/" replace />} />
+
+        <Route path="/search" element={<SearchResultsPage />} />
 
         <Route path="/" element={<HomePage />} />
 
