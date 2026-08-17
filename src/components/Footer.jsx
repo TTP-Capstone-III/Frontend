@@ -28,7 +28,7 @@ export default function Footer() {
           <h2>Support</h2>
           <span>Help center</span>
           <span>Safety information</span>
-          <span>Terms and privacy</span>
+          <span>Terms & privacy</span>
         </div>
       </div>
     </footer>

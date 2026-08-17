@@ -156,7 +156,7 @@ export default function HomePage() {
       // Shuffle a copied array so the homepage can show a different set of ten.
       const randomListings = [...response.items]
         .sort(() => Math.random() - 0.5)
-        .slice(0, 10);
+        .slice(0, 8);
 
       setListings(randomListings);
     } catch (requestError) {
@@ -194,7 +194,7 @@ export default function HomePage() {
       const nearbyListings = response.items
         .filter((listing) => listing.distanceMiles <= HOMEPAGE_RADIUS_MILES)
         .sort(() => Math.random() - 0.5)
-        .slice(0, 10);
+        .slice(0, 8);
 
       setListings(nearbyListings);
       setShowingNearbyListings(true);
@@ -244,14 +244,62 @@ export default function HomePage() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    if (new Date(form.endTime) <= new Date(form.startTime)) {
+    if (!form.location.trim()) {
+      setError("Enter an address, landmark, or neighborhood.");
+      return;
+    }
+
+    const latitude = Number(form.destinationLat);
+    const longitude = Number(form.destinationLng);
+
+    if (
+      form.destinationLat === "" ||
+      form.destinationLng === "" ||
+      !Number.isFinite(latitude) ||
+      !Number.isFinite(longitude)
+    ) {
+      setError("Choose a location from the suggestions.");
+      return;
+    }
+
+    const startTime = new Date(form.startTime);
+    const endTime = new Date(form.endTime);
+
+    if (Number.isNaN(startTime.getTime()) || Number.isNaN(endTime.getTime())) {
+      setError("Choose valid arrival and departure times.");
+      return;
+    }
+
+    if (endTime <= startTime) {
       setError("Departure must be later than arrival.");
       return;
     }
 
-    // The search-results page and map will use these form values later.
+    const params = new URLSearchParams({
+      location: form.location.trim(),
+      destinationLat: String(latitude),
+      destinationLng: String(longitude),
+      startTime: startTime.toISOString(),
+      endTime: endTime.toISOString(),
+      driverVehicleCategory: form.driverVehicleCategory,
+      sort: "distance",
+    });
+
     setError("");
+    navigate(`/search?${params.toString()}`);
   }
+
+  // function handleSubmit(event) {
+  //   event.preventDefault();
+
+  //   if (new Date(form.endTime) <= new Date(form.startTime)) {
+  //     setError("Departure must be later than arrival.");
+  //     return;
+  //   }
+
+  //   // The search-results page and map will use these form values later.
+  //   setError("");
+  // }
 
   useEffect(() => {
     // Load a random discovery set once when the homepage first mounts.
@@ -330,8 +378,8 @@ export default function HomePage() {
         </form>
 
         <p className="home-trust-message">
-          <span>✓</span> Clear fit guidance · Private address until booking · No
-          surprise total
+          <span>✓</span> Clear fit details · Private address until booking
+          confirmation· Upfront pricing
         </p>
 
         {error ? (
@@ -345,7 +393,9 @@ export default function HomePage() {
         <div className="listing-results-heading">
           <div>
             <p>
-              {showingNearbyListings ? "Available nearby" : "Available spots"}
+              {showingNearbyListings
+                ? "Available parking spots nearby"
+                : "Available parking spots"}
             </p>
             <h2>Explore parking spots</h2>
           </div>
@@ -356,7 +406,9 @@ export default function HomePage() {
         ) : null}
 
         {!loading && listings.length === 0 && !error ? (
-          <p className="listing-message">No parking spots are available yet.</p>
+          <p className="listing-message">
+            No parking spaces are currently available.
+          </p>
         ) : null}
 
         {!loading && listings.length > 0 ? (
@@ -371,19 +423,31 @@ export default function HomePage() {
                 </div>
 
                 <div className="listing-card-content">
-                  <div className="listing-card-title">
-                    <h3>{listing.title}</h3>
-                    <strong>
-                      ${(listing.hourlyPriceCents / 100).toFixed(2)}
-                      <small> / hour</small>
-                    </strong>
-                  </div>
-                  <p>
-                    {listing.neighborhood} · {listing.zipCode}
+                  <p className="listing-card-location">
+                    <svg
+                      className="listing-card-location-icon"
+                      viewBox="0 0 24 24"
+                      aria-hidden="true"
+                    >
+                      <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
+                    </svg>
+                    <span>
+                      {listing.neighborhood} · {listing.zipCode}
+                    </span>
                   </p>
-                  <p>
+
+                  <h3>{listing.title}</h3>
+
+                  <p className="listing-card-vehicle">
                     Up to{" "}
                     {getVehicleLabel(listing.maxVehicleCategory).toLowerCase()}
+                  </p>
+
+                  <p className="listing-card-price">
+                    <strong>
+                      ${(listing.hourlyPriceCents / 100).toFixed(2)}
+                    </strong>
+                    <small> / hour</small>
                   </p>
                 </div>
               </article>
@@ -395,49 +459,47 @@ export default function HomePage() {
       <section className="home-how-it-works">
         <div className="home-bottom-container">
           <div className="home-section-heading">
-            <p>Simple by design</p>
-            <h2>From search to parked in three steps</h2>
+            <p>How ParkNGo works</p>
+            <h2>Reserve a parking spot in three steps</h2>
           </div>
 
           <div className="home-steps-grid">
             <article>
               <span>01</span>
-              <h3>Search your area</h3>
+              <h3>Search for a parking spot</h3>
               <p>
-                Choose a neighborhood or ZIP, arrival, departure, and vehicle.
+                Enter a location, select your parking times, and choose your
+                vehicle type.
               </p>
             </article>
 
             <article>
               <span>02</span>
-              <h3>Check the fit</h3>
-              <p>
-                Compare the host’s space guidance with the vehicle you’re
-                parking.
-              </p>
+              <h3>Confirm vehicle fit</h3>
+              <p>Review the host’s vehicle-size guidance before reserving.</p>
             </article>
 
             <article>
               <span>03</span>
-              <h3>Reserve confidently</h3>
+              <h3>Reserve with confidence</h3>
               <p>
-                See the total first, then get the exact address and parking
-                instructions.
+                Review the total price before receiving the exact address and
+                detailed parking instructions.
               </p>
             </article>
           </div>
 
           <div className="home-host-callout">
             <div>
-              <p>Have an empty driveway?</p>
+              <p>Have an empty driveway, garage, or backyard?</p>
               <h2>Make your space useful.</h2>
               <span>
-                Create a clear listing, set your hours, and see every
-                reservation from one dashboard.
+                Create a listing, set availability, and manage reservations from
+                one dashboard.
               </span>
             </div>
 
-            <Link to="/host">List your spot</Link>
+            <Link to="/host">Become a host</Link>
           </div>
         </div>
       </section>

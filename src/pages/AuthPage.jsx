@@ -67,11 +67,9 @@ export default function AuthPage() {
               <p className="auth-kicker">
                 {isSignup ? "Join ParkNGo" : "Welcome back"}
               </p>
-              <h1>
-                {isSignup ? "Create your account" : "Log in to continue"}
-              </h1>
+              <h1>{isSignup ? "Create your account" : "Log in to continue"}</h1>
               <p className="auth-description">
-                Use the same account to find parking and host your own space.
+                Use the same account to find parking or host your own space.
               </p>
             </div>
 
@@ -139,7 +137,7 @@ export default function AuthPage() {
               <span>
                 {isSignup ? "Already have an account?" : "New to ParkNGo?"}
               </span>
-              <strong>{isSignup ? "Log in" : "Sign up"}</strong>
+              <strong>{isSignup ? "Log in" : "Create an account"}</strong>
             </button>
           </div>
         </section>
