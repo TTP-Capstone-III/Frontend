@@ -1,8 +1,17 @@
-import "../css/DriverDashBoard.css";
-import { formatPrice, formatDateTime } from "../utils/formats";
+import "../css/DriverDashboard.css";
+import { formatPrice, formatDateTime, vehicleLabel } from "../utils/formats";
 
 function ReservationCard({ reservation, onCancel, showDriver = false }) {
-  const { id, startTime, endTime, totalPriceCents, status, listing, driver } = reservation;
+  const {
+    id,
+    startTime,
+    endTime,
+    totalPriceCents,
+    status,
+    driverVehicleCategory,
+    listing,
+    driver,
+  } = reservation;
 
   const isCancellable = status === "CONFIRMED" && new Date(startTime) > new Date();
   const statusClass = status === "CONFIRMED" ? "confirmed" : "cancelled";
@@ -25,6 +34,11 @@ function ReservationCard({ reservation, onCancel, showDriver = false }) {
       <p className="reservation-card-detail">
         <strong>Total:</strong> {formatPrice(totalPriceCents)}
       </p>
+      {driverVehicleCategory && (
+        <p className="reservation-card-detail">
+          <strong>Vehicle:</strong> {vehicleLabel(driverVehicleCategory)}
+        </p>
+      )}
       {showDriver && driver && (
         <p className="reservation-card-detail">
           <strong>Driver:</strong> {driver.name}
