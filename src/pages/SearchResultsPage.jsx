@@ -1,4 +1,4 @@
-import { useSearchParams } from "react-router-dom"; //hook that reads the section after ?.
+import { Link, useSearchParams } from "react-router-dom"; //hook that reads the section after ?.
 import { useEffect, useState } from "react";
 import apiRequest from "../api/client"; //uses shared backend URL, cookies, JSON parsing, and error handling.
 import SearchMap from "../components/SearchMap";
@@ -211,7 +211,8 @@ export default function SearchResultsPage() {
           {!loading && !requestError && listings.length > 0 ? (
             <div className="search-listing-grid">
               {listings.map((listing) => (
-                <article
+                <Link
+                  to={`/listings/${listing.id}`}
                   className="search-listing-card"
                   key={listing.id}
                   onMouseEnter={() => setHoveredListingId(listing.id)}
@@ -276,7 +277,7 @@ export default function SearchResultsPage() {
                       <span> / hour</span>
                     </p>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
           ) : null}
