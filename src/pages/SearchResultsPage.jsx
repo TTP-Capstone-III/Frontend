@@ -212,7 +212,7 @@ export default function SearchResultsPage() {
             <div className="search-listing-grid">
               {listings.map((listing) => (
                 <Link
-                  to={`/listings/${listing.id}`}
+                  to={`/listings/${listing.id}?${searchParams.toString()}`}
                   className="search-listing-card"
                   key={listing.id}
                   onMouseEnter={() => setHoveredListingId(listing.id)}
