@@ -1,0 +1,209 @@
+.listing-detail-page {
+    width: 100%;
+    max-width: 72rem;
+    margin: 0 auto;
+    padding: 1.75rem 1.5rem 4rem;
+    box-sizing: border-box;
+}
+
+.listing-detail-message {
+    color: var(--navy-muted);
+}
+
+.listing-detail-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    color: var(--navy-muted);
+    background: none;
+    border: none;
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.listing-detail-back-link:hover {
+    color: var(--navy);
+}
+
+.listing-detail-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin: 0 0 0.5rem;
+    color: var(--navy);
+    font-size: 0.72rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.listing-detail-location-icon {
+    width: 0.7rem;
+    height: 0.7rem;
+    flex: 0 0 auto;
+    fill: var(--amber);
+}
+
+.listing-detail-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--navy-line);
+}
+
+.listing-detail-title-row h1 {
+    margin: 0;
+    font-size: clamp(1.75rem, 3vw, 2.35rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.listing-detail-host {
+    margin: 0.35rem 0 0;
+    color: var(--navy-muted);
+    font-size: 0.9rem;
+}
+
+.listing-detail-price {
+    display: flex;
+    flex: none;
+    flex-direction: column;
+    align-items: flex-end;
+    white-space: nowrap;
+}
+
+.listing-detail-price strong {
+    color: #2f6f4e;
+    font-size: 1.4rem;
+}
+
+.listing-detail-price span {
+    color: var(--navy-muted);
+    font-size: 0.78rem;
+    font-weight: 650;
+}
+
+.listing-detail-layout {
+    margin-top: 1.5rem;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    align-items: start;
+    gap: 2rem;
+}
+
+.listing-detail-main {
+    min-width: 0;
+}
+
+.listing-detail-image {
+    aspect-ratio: 16 / 9;
+    position: relative;
+    overflow: hidden;
+    background: var(--amber-soft);
+    border-radius: 0.875rem;
+}
+
+.listing-detail-image img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    object-position: center;
+}
+
+.listing-detail-image-empty {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--navy-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.listing-detail-section {
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--navy-line);
+}
+
+.listing-detail-section:last-child {
+    border-bottom: none;
+}
+
+.listing-detail-section h2 {
+    margin: 0 0 0.6rem;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+}
+
+.listing-detail-section p {
+    margin: 0;
+    color: var(--navy);
+    font-size: 0.92rem;
+    line-height: 1.55;
+}
+
+.listing-detail-section-note {
+    margin-top: 0.5rem !important;
+    color: var(--navy-muted) !important;
+    font-size: 0.82rem !important;
+}
+
+.listing-detail-reserve {
+    position: sticky;
+    top: 5.5rem;
+    padding: 1.5rem;
+    background: var(--white);
+    border: 1px solid var(--navy-line);
+    border-radius: 0.875rem;
+    box-shadow: 0 20px 45px rgba(15, 39, 66, 0.12);
+    box-sizing: border-box;
+}
+
+.listing-detail-reserve h2 {
+    margin: 0 0 1.1rem;
+    font-size: 1.15rem;
+    letter-spacing: -0.01em;
+}
+
+.listing-detail-reserve .reservation-form {
+    max-width: none;
+}
+
+.listing-detail-login-button {
+    width: 100%;
+    text-align: center;
+}
+
+.listing-detail-reserve-note {
+    margin: 0.75rem 0 0;
+    color: var(--navy-muted);
+    font-size: 0.76rem;
+    text-align: center;
+}
+
+@media (max-width: 900px) {
+    .listing-detail-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .listing-detail-reserve {
+        position: static;
+    }
+
+    .listing-detail-title-row {
+        flex-direction: column;
+    }
+
+    .listing-detail-price {
+        align-items: flex-start;
+    }
+}

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react"; //useRef remembers the HTML map container and the Mapbox object.
+import { useNavigate } from "react-router-dom";
 import { getVehicleLabel } from "./ParkingSearchForm";
 import mapboxgl from "mapbox-gl";
 
@@ -12,6 +13,7 @@ export default function SearchMap({
   onBoundsChange,
 }) {
   //accepts listings to show them on the map by marker
+  const navigate = useNavigate();
   const mapContainerRef = useRef(null); //remembers the HTML <div> | the empty <div> visible on the page
   const mapRef = useRef(null); //remembers the  Mapbox map | the Mapbox map placed inside that <div>
   const markersRef = useRef([]); //remembers every listing marker | useRef remebers its value across renders
@@ -107,8 +109,14 @@ export default function SearchMap({
       markerWrapper.append(markerButton);
 
       //creating popup mini listing to show when user click the price marker on the map
-      const popupCard = document.createElement("article");
+      const popupCard = document.createElement("a");
       popupCard.className = "map-listing-popup-card";
+      popupCard.href = `/listings/${listing.id}`;
+      popupCard.addEventListener("click", (event) => {
+        // Navigate through the router instead of a full page reload.
+        event.preventDefault();
+        navigate(`/listings/${listing.id}`);
+      });
 
       const popupImageArea = document.createElement("div");
       popupImageArea.className = "map-listing-popup-image-area";
@@ -238,7 +246,7 @@ export default function SearchMap({
 
       markersRef.current.push(marker); //adding marker to removal list
     });
-  }, [listings]); //[listings] tells react run this effect whenever the listings array changes.
+  }, [listings, navigate]); //[listings] tells react run this effect whenever the listings array changes.
 
   //highlighting the price marker when the listing card is hovered
   useEffect(() => {

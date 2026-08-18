@@ -414,7 +414,11 @@ export default function HomePage() {
         {!loading && listings.length > 0 ? (
           <div className="listing-grid">
             {listings.map((listing) => (
-              <article className="listing-card" key={listing.id}>
+              <Link
+                to={`/listings/${listing.id}`}
+                className="listing-card"
+                key={listing.id}
+              >
                 <div className="listing-card-image">
                   <img
                     src={listing.imageUrl}
@@ -450,7 +454,7 @@ export default function HomePage() {
                     <small> / hour</small>
                   </p>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         ) : null}
