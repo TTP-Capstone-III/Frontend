@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { getListingById } from "../api/listings";
 import { getVehicleLabel } from "../components/ParkingSearchForm";
 import ReservationForm from "../components/ReservationForm";
@@ -10,6 +10,7 @@ import "../styles/pages/listing-page.css";
 export default function ListingPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { user } = useAuth();
 
   const [listing, setListing] = useState(null);
@@ -59,6 +60,13 @@ export default function ListingPage() {
     );
   }
 
+  const reservationInitialValues = {
+    startTime: searchParams.get("startTime") ?? "",
+    endTime: searchParams.get("endTime") ?? "",
+    driverVehicleCategory:
+      searchParams.get("driverVehicleCategory") ?? "",
+  };
+
   return (
     <main className="listing-detail-page">
       <button
@@ -69,32 +77,27 @@ export default function ListingPage() {
         ← Back to results
       </button>
 
-      <p className="listing-detail-eyebrow">
-        <svg
-          className="listing-detail-location-icon"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
-        </svg>
-        <span>
-          {listing.neighborhood} · {listing.zipCode}
-        </span>
-      </p>
-
-      <div className="listing-detail-title-row">
-        <div>
+      <header className="listing-detail-header">
+        <div className="listing-detail-title-copy">
+          <p className="listing-detail-eyebrow">
+            <svg
+              className="listing-detail-location-icon"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
+            </svg>
+            <span>
+              {listing.neighborhood} · {listing.city}, {listing.state} ·{" "}
+              {listing.zipCode}
+            </span>
+          </p>
           <h1>{listing.title}</h1>
           {listing.host ? (
             <p className="listing-detail-host">Hosted by {listing.host.name}</p>
           ) : null}
         </div>
-
-        <div className="listing-detail-price">
-          <strong>{formatPrice(listing.hourlyPriceCents)}</strong>
-          <span>per hour</span>
-        </div>
-      </div>
+      </header>
 
       <div className="listing-detail-layout">
         <section className="listing-detail-main">
@@ -108,49 +111,73 @@ export default function ListingPage() {
             )}
           </div>
 
+          <div className="listing-detail-highlights">
+            <article className="listing-detail-highlight">
+              <span className="listing-detail-highlight-icon">✓</span>
+              <div>
+                <h2>Vehicle capacity</h2>
+                <p>
+                  Up to {getVehicleLabel(listing.maxVehicleCategory)}
+                </p>
+              </div>
+            </article>
+
+            <article className="listing-detail-highlight">
+              <svg
+                className="listing-detail-highlight-svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7Zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5Z" />
+              </svg>
+              <div>
+                <h2>Location protected</h2>
+                <p>Exact details are shared after booking.</p>
+              </div>
+            </article>
+          </div>
+
           <div className="listing-detail-section">
             <h2>About this space</h2>
             <p>{listing.description}</p>
           </div>
 
-          <div className="listing-detail-section">
-            <h2>Vehicle fit</h2>
-            <p>
-              Largest standard fit:{" "}
-              <strong>{getVehicleLabel(listing.maxVehicleCategory)}</strong>
-            </p>
-            {listing.otherVehicleDescription ? (
-              <p className="listing-detail-section-note">
-                {listing.otherVehicleDescription}
-              </p>
-            ) : null}
-          </div>
+          {listing.otherVehicleDescription ? (
+            <div className="listing-detail-section">
+              <h2>Vehicle fit notes</h2>
+              <p>{listing.otherVehicleDescription}</p>
+            </div>
+          ) : null}
 
           <div className="listing-detail-section">
-            <h2>Location</h2>
-            <p>
-              {listing.neighborhood}, {listing.city}, {listing.state}{" "}
-              {listing.zipCode}
-            </p>
-            <p className="listing-detail-section-note">
-              The exact street address and instructions appear after booking.
-            </p>
-          </div>
-
-          <div className="listing-detail-section">
-            <h2>Host availability</h2>
-            <p>
-              {formatDateTime(listing.availableFrom)} →{" "}
-              {formatDateTime(listing.availableUntil)}
-            </p>
+            <h2>Available booking window</h2>
+            <div className="listing-detail-availability">
+              <div>
+                <span>From</span>
+                <strong>{formatDateTime(listing.availableFrom)}</strong>
+              </div>
+              <div>
+                <span>Until</span>
+                <strong>{formatDateTime(listing.availableUntil)}</strong>
+              </div>
+            </div>
           </div>
         </section>
 
         <aside className="listing-detail-reserve">
-          <h2>Reserve this spot</h2>
+          <div className="listing-detail-reserve-heading">
+            <div className="listing-detail-price">
+              <strong>{formatPrice(listing.hourlyPriceCents)}</strong>
+              <span>/ hour</span>
+            </div>
+            <p>Check availability before payment.</p>
+          </div>
 
           {user ? (
-            <ReservationForm listing={listing} />
+            <ReservationForm
+              listing={listing}
+              initialValues={reservationInitialValues}
+            />
           ) : (
             <>
               <button
@@ -161,7 +188,7 @@ export default function ListingPage() {
                 Log in to reserve
               </button>
               <p className="listing-detail-reserve-note">
-                No payment is collected in this step.
+                Log in to check availability and continue to secure checkout.
               </p>
             </>
           )}

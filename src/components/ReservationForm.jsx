@@ -3,12 +3,32 @@ import VehicleSelect from "./VehicleSelect";
 import { quoteReservation } from "../api/reservations";
 import { createCheckoutSession } from "../api/payment";
 import { formatPrice } from "../utils/formats";
-import "../css/DriverDashBoard.css";
 
-function ReservationForm({ listing }) {
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [driverVehicleCategory, setDriverVehicleCategory] = useState("");
+function toDateTimeInputValue(value) {
+  if (!value) {
+    return "";
+  }
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  const timezoneOffset = date.getTimezoneOffset() * 60 * 1000;
+  return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 16);
+}
+
+function ReservationForm({ listing, initialValues = {} }) {
+  const [startTime, setStartTime] = useState(() =>
+    toDateTimeInputValue(initialValues.startTime),
+  );
+  const [endTime, setEndTime] = useState(() =>
+    toDateTimeInputValue(initialValues.endTime),
+  );
+  const [driverVehicleCategory, setDriverVehicleCategory] = useState(
+    initialValues.driverVehicleCategory ?? "",
+  );
   const [fitAcknowledged, setFitAcknowledged] = useState(false);
 
   const [quote, setQuote] = useState(null);
@@ -70,12 +90,7 @@ function ReservationForm({ listing }) {
 
       sessionStorage.setItem("pendingBooking", JSON.stringify(bookingDetails));
 
-      await createCheckoutSession({
-        listingId: listing.id,
-        startTime: bookingDetails.startTime,
-        endTime: bookingDetails.endTime,
-        totalPriceCents: quote.totalPriceCents,
-      });
+      await createCheckoutSession(bookingDetails);
     } catch (err) {
       setError(err.message || "Unable to start checkout. Please try again.");
       setRedirecting(false);
@@ -84,26 +99,28 @@ function ReservationForm({ listing }) {
 
   return (
     <form onSubmit={handleGetQuote} className="reservation-form">
-      <div className="form-field">
-        <label htmlFor="startTime">Arrival</label>
-        <input
-          id="startTime"
-          type="datetime-local"
-          value={startTime}
-          onChange={(e) => setStartTime(e.target.value)}
-          required
-        />
-      </div>
+      <div className="reservation-dates">
+        <div className="reservation-field">
+          <label htmlFor="startTime">Arrival</label>
+          <input
+            id="startTime"
+            type="datetime-local"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            required
+          />
+        </div>
 
-      <div className="form-field">
-        <label htmlFor="endTime">Departure</label>
-        <input
-          id="endTime"
-          type="datetime-local"
-          value={endTime}
-          onChange={(e) => setEndTime(e.target.value)}
-          required
-        />
+        <div className="reservation-field">
+          <label htmlFor="endTime">Departure</label>
+          <input
+            id="endTime"
+            type="datetime-local"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            required
+          />
+        </div>
       </div>
 
       <VehicleSelect value={driverVehicleCategory} onChange={handleVehicleChange} />
@@ -122,25 +139,33 @@ function ReservationForm({ listing }) {
         </label>
       )}
 
-      {error && <p className="form-error">{error}</p>}
+      {error ? (
+        <p className="app-alert reservation-error" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <button type="submit" disabled={quoting || redirecting} className="btn-amber">
         {quoting ? "Checking..." : "Check price & availability"}
       </button>
 
       {quote && (
-        <div className="quote-box">
-          <p className="quote-price">{formatPrice(quote.totalPriceCents)}</p>
+        <div className="reservation-quote">
+          <div className="reservation-quote-total">
+            <span>Estimated total</span>
+            <strong>{formatPrice(quote.totalPriceCents)}</strong>
+          </div>
           {quote.billableBlocks && (
-            <p className="quote-detail">Billed time: {quote.billableBlocks}</p>
+            <p className="reservation-quote-detail">
+              {quote.billableBlocks} billable 30-minute blocks
+            </p>
           )}
-          <p className="quote-detail">{quote.fitMessage}</p>
+          <p className="reservation-quote-detail">{quote.fitMessage}</p>
           <button
             type="button"
             onClick={handleConfirmAndPay}
             disabled={redirecting}
-            className="btn-amber"
-            style={{ marginTop: "0.75rem" }}
+            className="btn-amber reservation-checkout-button"
           >
             {redirecting ? "Redirecting to payment..." : "Confirm & Pay"}
           </button>

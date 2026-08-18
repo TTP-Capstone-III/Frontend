@@ -1,7 +1,6 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { createReservation } from "../api/reservations";
 
 function BookingSuccess() {
   const [searchParams] = useSearchParams();
@@ -17,28 +16,9 @@ function BookingSuccess() {
       return;
     }
 
-    const pendingBookingRaw = sessionStorage.getItem("pendingBooking");
-
-    if (!pendingBookingRaw) {
-      setStatus("error");
-      setErrorMessage("We couldn't find your booking details. Please try again.");
-      return;
-    }
-
-    const pendingBooking = JSON.parse(pendingBookingRaw);
-
-    async function finalizeBooking() {
-      try {
-        await createReservation(pendingBooking);
-        sessionStorage.removeItem("pendingBooking");
-        window.location.href = "/driver?booked=1"; // matches spec's expected destination
-      } catch (error) {
-        setStatus("error");
-        setErrorMessage(error.message || "Payment succeeded, but we couldn't finalize your booking.");
-      }
-    }
-
-    finalizeBooking();
+    // The backend creates the reservation before checkout and confirms it by webhook.
+    sessionStorage.removeItem("pendingBooking");
+    setStatus("complete");
   }, [sessionId]);
 
   if (status === "error") {
@@ -53,11 +33,17 @@ function BookingSuccess() {
     );
   }
 
-  return (
-    <div className="max-w-md mx-auto mt-16 text-center">
-      <p className="text-lg">Finalizing your reservation...</p>
-    </div>
-  );
+  if (status === "complete") {
+    return (
+      <main>
+        <h1>Payment received</h1>
+        <p>Your reservation is being confirmed.</p>
+        <Link to="/driver?booked=1">View driver dashboard</Link>
+      </main>
+    );
+  }
+
+  return <p>Confirming your payment...</p>;
 }
 
 export default BookingSuccess;

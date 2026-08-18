@@ -1,5 +1,3 @@
- import "../css/DriverDashboard.css"
-
 const VEHICLE_CATEGORIES = [
   { value: "COMPACT", label: "Compact" },
   { value: "SEDAN", label: "Sedan" },
@@ -11,8 +9,8 @@ const VEHICLE_CATEGORIES = [
 
 function VehicleSelect({ value, onChange, required = true }) {
   return (
-    <div>
-      <label htmlFor="vehicleCategory" className="block text-sm font-medium text-gray-700 mb-1">
+    <div className="reservation-field">
+      <label htmlFor="vehicleCategory">
         Vehicle type
       </label>
       <select
@@ -20,7 +18,6 @@ function VehicleSelect({ value, onChange, required = true }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
       >
         <option value="" disabled>
           Select your vehicle type
