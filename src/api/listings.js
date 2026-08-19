@@ -12,11 +12,10 @@ export async function getListingById(id) {
 }
 
 // POST create a new listing (host only)
-export async function createListing(data) {
+export async function createListing(formData) {
   return apiRequest("/api/listings", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+    body: formData,
   });
 }
 
