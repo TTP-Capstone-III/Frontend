@@ -29,7 +29,7 @@ function ListParkingSpot() {
     availableUntil: "",
     maxVehicleCategory: "SEDAN",
     otherVehicleDescription: "",
-    imageUrl: "",
+    imageFile: null,
   });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
@@ -42,30 +42,50 @@ function ListParkingSpot() {
     e.preventDefault();
     setError(null);
 
+    if (!form.imageFile) {
+      setError("Please choose a parking photo.");
+      return;
+    }
+
     try {
       setSubmitting(true);
+      //use FormData(), because photo is a binary File, not ordinary JSON data
+      const formData = new FormData();
 
-      await createListing({
-        title: form.title,
-        description: form.description,
-        instructions: form.instructions,
-        streetAddress: form.streetAddress,
-        neighborhood: form.neighborhood,
-        city: form.city,
-        state: form.state,
-        zipCode: form.zipCode,
-        hourlyPriceCents: Math.round(Number(form.hourlyPriceCents) * 100),
-        availableFrom: new Date(form.availableFrom).toISOString(),
-        availableUntil: new Date(form.availableUntil).toISOString(),
-        maxVehicleCategory: form.maxVehicleCategory,
-        otherVehicleDescription:
-          form.maxVehicleCategory === "OTHER_NOT_SURE"
-            ? form.otherVehicleDescription || "Fit unclear — please confirm before booking."
-            : undefined,
-        exactLatitude: 39.7817,
-        exactLongitude: -89.6501,
-        imageUrl: form.imageUrl || "https://placehold.co/600x400?text=Parking+Spot",
-      });
+      formData.append("title", form.title);
+      formData.append("description", form.description);
+      formData.append("instructions", form.instructions);
+      formData.append("streetAddress", form.streetAddress);
+      formData.append("neighborhood", form.neighborhood);
+      formData.append("city", form.city);
+      formData.append("state", form.state);
+      formData.append("zipCode", form.zipCode);
+      formData.append(
+        "hourlyPriceCents",
+        String(Math.round(Number(form.hourlyPriceCents) * 100)),
+      );
+      formData.append(
+        "availableFrom",
+        new Date(form.availableFrom).toISOString(),
+      );
+      formData.append(
+        "availableUntil",
+        new Date(form.availableUntil).toISOString(),
+      );
+      formData.append("maxVehicleCategory", form.maxVehicleCategory);
+      formData.append("exactLatitude", "39.7817");
+      formData.append("exactLongitude", "-89.6501");
+      formData.append("image", form.imageFile);
+
+      if (form.maxVehicleCategory === "OTHER_NOT_SURE") {
+        formData.append(
+          "otherVehicleDescription",
+          form.otherVehicleDescription ||
+            "Fit unclear — please confirm before booking.",
+        );
+      }
+
+      await createListing(formData);
 
       navigate("/host?listed=1");
     } catch (err) {
@@ -84,7 +104,9 @@ function ListParkingSpot() {
 
         <p className="eyebrow eyebrow-amber">Become a host</p>
         <h1 className="form-title">List your parking spot</h1>
-        <p className="form-subtitle">Give drivers the data they need to park confidently.</p>
+        <p className="form-subtitle">
+          Give drivers the data they need to park confidently.
+        </p>
 
         <form onSubmit={handleSubmit}>
           <section className="form-section">
@@ -176,7 +198,9 @@ function ListParkingSpot() {
                 <input
                   type="text"
                   value={form.state}
-                  onChange={(e) => updateField("state", e.target.value.toUpperCase())}
+                  onChange={(e) =>
+                    updateField("state", e.target.value.toUpperCase())
+                  }
                   maxLength={2}
                   required
                 />
@@ -205,7 +229,9 @@ function ListParkingSpot() {
                 min="1"
                 max="1000"
                 value={form.hourlyPriceCents}
-                onChange={(e) => updateField("hourlyPriceCents", e.target.value)}
+                onChange={(e) =>
+                  updateField("hourlyPriceCents", e.target.value)
+                }
                 required
               />
             </div>
@@ -225,7 +251,9 @@ function ListParkingSpot() {
                 <input
                   type="datetime-local"
                   value={form.availableUntil}
-                  onChange={(e) => updateField("availableUntil", e.target.value)}
+                  onChange={(e) =>
+                    updateField("availableUntil", e.target.value)
+                  }
                   required
                 />
               </div>
@@ -235,14 +263,17 @@ function ListParkingSpot() {
           <section className="form-section">
             <h2 className="form-section-title">Vehicle fit</h2>
             <p className="form-section-hint">
-              Choose the largest vehicle that fits comfortably — not the tightest possible fit.
+              Choose the largest vehicle that fits comfortably — not the
+              tightest possible fit.
             </p>
 
             <div className="form-field">
               <label>Largest vehicle that fits</label>
               <select
                 value={form.maxVehicleCategory}
-                onChange={(e) => updateField("maxVehicleCategory", e.target.value)}
+                onChange={(e) =>
+                  updateField("maxVehicleCategory", e.target.value)
+                }
               >
                 {VEHICLE_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -258,7 +289,9 @@ function ListParkingSpot() {
                 <input
                   type="text"
                   value={form.otherVehicleDescription}
-                  onChange={(e) => updateField("otherVehicleDescription", e.target.value)}
+                  onChange={(e) =>
+                    updateField("otherVehicleDescription", e.target.value)
+                  }
                   placeholder="e.g. Fits most cars, but tight for larger SUVs"
                   maxLength={180}
                 />
@@ -275,15 +308,25 @@ function ListParkingSpot() {
                 <input
                   type="file"
                   accept=".jpg,.jpeg,.png,.webp"
+                  required
                   style={{ display: "none" }}
                   onChange={(e) => {
                     if (e.target.files[0]) {
-                      updateField("imageUrl", URL.createObjectURL(e.target.files[0]));
+                      updateField("imageFile", e.target.files[0]);
                     }
                   }}
                 />
               </label>
-              <span className="photo-upload-hint">JPG, PNG, or WebP — 5 MB maximum</span>
+              {/* JavaScript check protects request, required gives host immediate browser feedback before submission. */}
+              <span className="photo-upload-hint">
+                JPG, PNG, or WebP — 5 MB maximum
+              </span>
+              {form.imageFile && (
+                <p className="photo-upload-hint">
+                  Selected: {form.imageFile.name}
+                </p>
+              )}
+              {/* proves browser gave React actual File object, without uploading it early or creating a temporary URL. */}
             </div>
           </section>
 
