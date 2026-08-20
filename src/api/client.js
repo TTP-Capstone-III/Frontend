@@ -1,4 +1,6 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5050";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? "" : "http://localhost:5050");
 
 // Centralize the backend URL, cookie handling, JSON parsing, and API errors.
 //path->where should the request go , options->how should the request be sent
